@@ -5,6 +5,7 @@ import 'package:flutter_weather_app/widgets/widgets.dart';
 class CombinedWeatherTemperature extends StatelessWidget {
   final model.Weather weather;
 
+
   CombinedWeatherTemperature({
     Key key,
     @required this.weather,

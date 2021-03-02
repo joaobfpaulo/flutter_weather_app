@@ -1,4 +1,5 @@
 import 'package:equatable/equatable.dart';
+import 'package:intl/intl.dart';
 
 enum WeatherCondition {
   snow,
@@ -20,10 +21,8 @@ class Weather extends Equatable {
   final double minTemp;
   final double temp;
   final double maxTemp;
-  final int locationId;
   final String created;
-  final DateTime lastUpdated;
-  final String location;
+  final String date;
 
   const Weather({
     this.condition,
@@ -31,10 +30,8 @@ class Weather extends Equatable {
     this.minTemp,
     this.temp,
     this.maxTemp,
-    this.locationId,
     this.created,
-    this.lastUpdated,
-    this.location,
+    this.date
   });
 
   @override
@@ -44,29 +41,25 @@ class Weather extends Equatable {
     minTemp,
     temp,
     maxTemp,
-    locationId,
     created,
-    lastUpdated,
-    location
+    date
   ];
 
   static Weather fromJson(dynamic json) {
-    final consolidatedWeather = json['consolidated_weather'][0];
+    final String dateFormatted = DateFormat("dd/MM").format(DateTime.parse(json['applicable_date']));
 
     return Weather(
-      formattedCondition: consolidatedWeather['weather_state_name'],
-      condition: _mapStringToWeatherCondition(consolidatedWeather['weather_state_abbr']),
-      created: consolidatedWeather['created'],
-      minTemp: consolidatedWeather['min_temp'] as double,
-      maxTemp: consolidatedWeather['max_temp'] as double,
-      temp: consolidatedWeather['the_temp'] as double,
-      location: json['title'],
-      locationId: json['woeid'] as int,
-      lastUpdated: DateTime.now(),
+      formattedCondition: json['weather_state_name'],
+      condition: mapStringToWeatherCondition(json['weather_state_abbr']),
+      created: json['created'],
+      date: dateFormatted,
+      minTemp: json['min_temp'] as double,
+      maxTemp: json['max_temp'] as double,
+      temp: json['the_temp'] as double
     );
   }
 
-  static WeatherCondition _mapStringToWeatherCondition(String input) {
+  static WeatherCondition mapStringToWeatherCondition(String input) {
     WeatherCondition state;
     switch (input) {
       case 'sn':

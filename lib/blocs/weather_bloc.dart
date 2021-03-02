@@ -26,8 +26,8 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
   Stream<WeatherState> mapWeatherRequestedToState(WeatherRequestedForCity event) async* {
     yield WeatherLoadInProgress();
     try {
-      final Weather weather = await weatherRepository.getWeatherForCity(event.city);
-      yield WeatherLoadSuccess(weather: weather);
+      final ConsolidatedWeather consolidatedWeather = await weatherRepository.getWeatherForCity(event.city);
+      yield WeatherLoadSuccess(consolidatedWeather: consolidatedWeather);
     } catch (_) {
       yield WeatherLoadFailure();
     }
@@ -36,8 +36,8 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
   Stream<WeatherState> mapWeatherRequestedFromCoordinatesToState(WeatherRequestedFromCoordinates event) async* {
     yield WeatherLoadInProgress();
     try {
-      final Weather weather = await weatherRepository.getWeatherFromCoordinates(event.coordinates);
-      yield WeatherLoadSuccess(weather: weather);
+      final ConsolidatedWeather consolidatedWeather = await weatherRepository.getWeatherFromCoordinates(event.coordinates);
+      yield WeatherLoadSuccess(consolidatedWeather: consolidatedWeather);
     } catch (_) {
       yield WeatherLoadFailure();
     }
@@ -45,8 +45,10 @@ class WeatherBloc extends Bloc<WeatherEvent, WeatherState> {
 
   Stream<WeatherState> mapWeatherRefreshRequestedToState(WeatherRefreshRequested event) async* {
     try {
-      final Weather weather = await weatherRepository.getWeatherForCity(event.city);
-      yield WeatherLoadSuccess(weather: weather);
+      final ConsolidatedWeather consolidatedWeather = await weatherRepository.getWeatherForCity(event.city);
+      yield WeatherRefreshPreSuccess(consolidatedWeather: consolidatedWeather);
+      yield WeatherLoadSuccess(consolidatedWeather: consolidatedWeather);
+
     } catch (_) {}
   }
 }

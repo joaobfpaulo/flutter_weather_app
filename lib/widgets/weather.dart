@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_weather_app/gradient_container.dart';
+import 'package:flutter_weather_app/widgets/next_days_weather.dart';
 import 'package:flutter_weather_app/widgets/widgets.dart';
 import 'package:flutter_weather_app/blocs/blocs.dart';
 
@@ -45,7 +46,7 @@ class _WeatherState extends State<Weather> {
           listener: (context, state) {
             if (state is WeatherLoadSuccess) {
               BlocProvider.of<ThemeBloc>(context).add(
-                WeatherChanged(condition: state.weather.condition),
+                WeatherChanged(condition: state.consolidatedWeather.listWeather[0].condition),
               );
               refreshCompleter?.complete();
               refreshCompleter = Completer();
@@ -81,7 +82,7 @@ class _WeatherState extends State<Weather> {
               return Center(child: CircularProgressIndicator());
             }
             if (state is WeatherLoadSuccess) {
-              final weather = state.weather;
+              final consolidatedWeather = state.consolidatedWeather;
               return BlocBuilder<ThemeBloc, ThemeState>(
                   builder: (context, themeState) {
                     return GradientContainer(
@@ -90,31 +91,40 @@ class _WeatherState extends State<Weather> {
                           onRefresh: () {
                             BlocProvider.of<WeatherBloc>(context).add(
                               WeatherRefreshRequested(
-                                  city: state.weather.location),
+                                  city: state.consolidatedWeather.location),
                             );
                             return refreshCompleter.future;
                           },
-                          child: ListView(
-                            children: <Widget>[
-                              Padding(
-                                padding: EdgeInsets.only(top: 100.0),
-                                child: Center(
-                                  child: City(location: weather.location),
-                                ),
-                              ),
-                              Center(
-                                child: LastUpdated(
-                                    dateTime: weather.lastUpdated),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.symmetric(vertical: 50.0),
-                                child: Center(
-                                  child: CombinedWeatherTemperature(
-                                    weather: weather,
+                          child: Center(
+                            child: ListView(
+                              children: <Widget>[
+                                Padding(
+                                  padding: EdgeInsets.only(top: 50.0),
+                                  child: Center(
+                                    child: City(location: consolidatedWeather.location),
                                   ),
                                 ),
-                              ),
-                            ],
+                                Center(
+                                  child: LastUpdated(
+                                      dateTime: consolidatedWeather.lastUpdated),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 25.0),
+                                  child: Center(
+                                    child: CombinedWeatherTemperature(
+                                      weather: consolidatedWeather.listWeather[0],
+                                    ),
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsets.symmetric(vertical: 10.0),
+                                  child: Center(
+                                    child:  NextDaysWeather(consolidatedWeather: consolidatedWeather),
+                                  ),
+                                ),
+
+                              ],
+                            ),
                           ),
                         ),
                     );

@@ -10,9 +10,9 @@ class WeatherConditions extends StatelessWidget {
         super(key: key);
 
   @override
-  Widget build(BuildContext context) => _mapConditionToImage(condition);
+  Widget build(BuildContext context) => mapConditionToImage(condition);
 
-  Image _mapConditionToImage(WeatherCondition condition) {
+  Image mapConditionToImage(WeatherCondition condition) {
     Image image;
     switch (condition) {
       case WeatherCondition.clear:

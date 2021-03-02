@@ -14,14 +14,20 @@ class WeatherInitial extends WeatherState {}
 class WeatherLoadInProgress extends WeatherState {}
 
 class WeatherLoadSuccess extends WeatherState {
-  final Weather weather;
+  final ConsolidatedWeather consolidatedWeather;
 
   const WeatherLoadSuccess({
-    @required this.weather
-  }) : assert(weather != null);
+    @required this.consolidatedWeather
+  }) : assert(consolidatedWeather != null);
 
   @override
-  List<Object> get props => [weather];
+  List<Object> get props => [consolidatedWeather];
+}
+
+class WeatherRefreshPreSuccess extends WeatherLoadSuccess {
+  const WeatherRefreshPreSuccess({
+    consolidatedWeather
+  }) : super(consolidatedWeather: consolidatedWeather);
 }
 
 class WeatherLoadFailure extends WeatherState {}

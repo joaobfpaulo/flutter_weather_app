@@ -1,4 +1,4 @@
-import 'package:flutter_weather_app/models/weather.dart';
+import 'package:flutter_weather_app/models/models.dart';
 import 'package:http/http.dart' as http;
 import 'package:meta/meta.dart';
 import 'dart:convert';
@@ -35,7 +35,7 @@ class WeatherApiClient {
     return (locationJson.first)['woeid'];
   }
 
-  Future<Weather> fetchWeather(int locationId) async {
+  Future<ConsolidatedWeather> fetchWeather(int locationId) async {
     final weatherUrl = '$baseUrl/api/location/$locationId';
     final weatherResponse = await this.httpClient.get(weatherUrl);
 
@@ -44,8 +44,8 @@ class WeatherApiClient {
     }
 
     String source = Utf8Decoder().convert(weatherResponse.bodyBytes);
-    final weatherJson = jsonDecode(source);
-    return Weather.fromJson(weatherJson);
+    final consolidatedWeatherJson = jsonDecode(source);
+    return ConsolidatedWeather.fromJson(consolidatedWeatherJson);
   }
 
 
